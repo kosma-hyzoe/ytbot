@@ -1,8 +1,8 @@
+from helpers import constants
 import config
-import constants
 from forms.cookies import CookiesForm
 from forms.pages.home import HomePage
-from helpers import get_driver
+from helpers.helpers import get_driver
 
 
 def main():

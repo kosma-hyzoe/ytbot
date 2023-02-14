@@ -3,7 +3,6 @@ from selenium.webdriver.common.by import By
 
 import config
 from forms.form import Form
-from helpers import click_with_js
 
 
 class CookiesForm(Form):
