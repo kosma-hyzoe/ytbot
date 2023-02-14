@@ -8,8 +8,12 @@ from helpers.helpers import get_driver, init_logger
 def main():
     init_logger()
     driver = get_driver()
+
+
     try:
         driver.get(constants.BASE_URL)
+        switch_window(driver)
+
         home_page = HomePage(driver)
 
         if home_page.is_cookies_form_displayed():
@@ -25,11 +29,16 @@ def main():
 
         watch_page.skip_to_middle()
         watch_page.mute_video()
-        watch_page.get_video_details()
+        video_details = watch_page.get_video_details()
 
-
+        print(video_details)
     finally:
         driver.quit()
+
+
+def switch_window(driver):
+    current_window = driver.current_window_handle
+    driver.switch_to.window(driver.window_handles[0])
 
 
 if __name__ == "__main__":

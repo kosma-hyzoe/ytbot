@@ -30,9 +30,14 @@
 
 ### Urgent
 
-### Important
+* 
+
+### Test scenarios
+
+* sliding the progress bar results in video time being approx in the middle
 
 ### Other
 
 * better locator for "accept all button"
+* better upload date locator
 * move config to json if the project scales

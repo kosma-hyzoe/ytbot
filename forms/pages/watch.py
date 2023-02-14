@@ -21,6 +21,7 @@ class WatchPage(Form):
     MUTE_BUTTON_LOCATOR = (By.XPATH, "//button[contains(@class, 'ytp-mute-button')]")
 
     WATCH_METADATA_SECTION_LOCATOR = (By.ID, 'above-the-fold')
+    VIDEO_DURATION_LOCATOR = (By.CLASS_NAME, 'ytp-time-duration')
 
     def __init__(self, driver, timeout: int = config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.VIDEO_LOCATOR)
@@ -50,11 +51,23 @@ class WatchPage(Form):
         except TimeoutException:
             wait.until(EC.invisibility_of_element_located(self.ADS_OVERLAY_LOCATOR))
 
-    def get_video_details(self):
+    def get_video_details(self) -> VideoDetails:
+        video_length = self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text
+
         watch_metadata = self._get_watch_metadata_element()
-        print(watch_metadata.get_title())
-        print(watch_metadata.get_channel_name())
-        print("foobar")
+        watch_metadata.show_more()
+
+        return VideoDetails(
+            duration=video_length,
+            title=watch_metadata.get_title(),
+            channel_name=watch_metadata.get_channel_name(),
+            upload_date=watch_metadata.get_upload_date(),
+            view_count=watch_metadata.get_view_count(),
+            like_count=watch_metadata.get_like_count(),
+            dislike_count=watch_metadata.get_dislike_count()
+        )
+
+
 
     def _get_watch_metadata_element(self):
         watch_metadata_element = self.driver.find_element(*self.WATCH_METADATA_SECTION_LOCATOR)
