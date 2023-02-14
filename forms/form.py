@@ -11,7 +11,6 @@ class Form(object):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, timeout)
         self.unique_element_locator = unique_element_locator
-        self.wait.until(EC.visibility_of_element_located(unique_element_locator))
 
     def is_displayed(self) -> bool:
         try:

@@ -1,6 +1,7 @@
 ## My files
 
 .idea
+/debugging.py
 
 ## GitHub Python template
 
@@ -133,3 +134,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+

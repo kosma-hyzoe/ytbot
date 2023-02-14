@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 
 import config
 from forms.form import Form
+from helpers import click_with_js
 
 
 class CookiesForm(Form):
@@ -21,3 +22,4 @@ class CookiesForm(Form):
             return self.driver.find_element(*self.ACCEPT_COOKIES_BUTTON).is_displayed()
         except NoSuchElementException:
             return False
+

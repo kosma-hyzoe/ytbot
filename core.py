@@ -1,3 +1,4 @@
+import config
 import constants
 from forms.cookies import CookiesForm
 from forms.pages.home import HomePage
@@ -13,6 +14,12 @@ def main():
         if home_page.is_cookies_form_displayed():
             cookies_form = CookiesForm(driver)
             cookies_form.accept_cookies()
+            driver.refresh()
+
+        results_page = home_page.search(config.SEARCH_STRING)
+        results_page.select_first_result()
+
+        print("foobar")
 
     finally:
         driver.quit()
