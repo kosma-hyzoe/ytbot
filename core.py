@@ -17,7 +17,11 @@ def main():
             driver.refresh()
 
         results_page = home_page.search(config.SEARCH_STRING)
-        results_page.select_first_result()
+        watch_page = results_page.select_first_result()
+
+        if watch_page.is_ads_overlay_displayed():
+            watch_page.skip_or_wait_ad()
+
     finally:
         driver.quit()
 
