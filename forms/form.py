@@ -19,3 +19,7 @@ class Form(object):
             return self.driver.find_element(*self.unique_element_locator).is_displayed()
         except NoSuchElementException:
             return False
+
+    def wait_until_is_closed(self):
+        self.wait.until(EC.invisibility_of_element_located(self.unique_element_locator))
+
