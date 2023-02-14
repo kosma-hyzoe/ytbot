@@ -22,6 +22,8 @@ def main():
         if watch_page.is_ads_overlay_displayed():
             watch_page.skip_or_wait_ad()
 
+        watch_page.skip_to_middle()
+
     finally:
         driver.quit()
 

@@ -1,4 +1,5 @@
 from selenium.common import TimeoutException, NoSuchElementException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,9 +13,17 @@ class WatchPage(Form):
     SKIP_ADS_BUTTON_LOCATOR = (By.XPATH, "//button[contains(@class, 'ytp-ad-skip-button')]")
     VIDEO_LOCATOR = (By.XPATH, "//video")
     ADS_OVERLAY_LOCATOR = (By.XPATH, "//div[contains(@class, 'ytp-ad-player-overlay')]")
+    PROGRESS_BAR_LOCATOR = (By.XPATH, "//div[contains(@class, 'ytp-progress-bar-container')]")
 
     def __init__(self, driver, timeout: int = config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.VIDEO_LOCATOR)
+
+    def skip_to_middle(self):
+        progress_bar = self.driver.find_element(*self.PROGRESS_BAR_LOCATOR)
+        progress_bar_width = progress_bar.size['width']
+        ActionChains(self.driver).click_and_hold(progress_bar).move_by_offset(
+            progress_bar_width // 200, 0).release().perform()
+
 
     def is_ads_overlay_displayed(self):
         try:
