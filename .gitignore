@@ -1,6 +1,13 @@
-## My files
+## IDEs
 
 .idea
+
+## Virtual environments
+
+kantar-venv
+
+## Misc
+
 /debugging.py
 
 ## GitHub Python template

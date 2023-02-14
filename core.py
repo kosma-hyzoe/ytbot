@@ -18,9 +18,6 @@ def main():
 
         results_page = home_page.search(config.SEARCH_STRING)
         results_page.select_first_result()
-
-        print("foobar")
-
     finally:
         driver.quit()
 
