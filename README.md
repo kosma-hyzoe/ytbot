@@ -10,9 +10,9 @@ Test with `pytest`.
 
 ## Issues and limitiations
 
-pytest doesn't handle the `humanfriendly` library well when
-run from command line, works in an IDE though. I might fix
-it soon, but this is NOT a priority for me.
+pytest doesn't recognize the `humanfriendly` library well when
+run from command line, works in an IDE though. I consider it
+low-priority for now, but will try to fix it soon.
 
 ## Task description
 
