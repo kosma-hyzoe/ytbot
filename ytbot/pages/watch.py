@@ -40,10 +40,10 @@ class WatchPage(Form):
 
         self.wait_until_is_displayed()
 
-    def skip_to_middle(self):
+    def skip_to_middle(self, slider_offset_factor: int = config.SLIDER_OFFSET_FACTOR):
         slider = self.driver.find_element(*self.PROGRESS_BAR_LOCATOR)
         slider_width = slider.size['width']
-        xoffset = slider_width / 200
+        xoffset = slider_width / slider_offset_factor
         logger.info(f"{self.name}: skipping to the middle of video playback with Selenium ActionChains...")
         ActionChains(self.driver).click_and_hold(slider).move_by_offset(xoffset=xoffset, yoffset=0).release().perform()
 

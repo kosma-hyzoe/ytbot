@@ -4,7 +4,8 @@ LOCATE_AD_OVERLAY_TIMEOUT: float = 1.5
 AD_SKIP_TIMEOUT: float = 10.
 
 SEARCH_STRING: str = "python"
-
+# 200 seems to work fine, but it's more an art than a science
+SLIDER_OFFSET_FACTOR: int = 200
 # in seconds
 NEXT_VIDEO_PAUSE_ON_DURATION: int = 10
 
