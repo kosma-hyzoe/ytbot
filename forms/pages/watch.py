@@ -1,3 +1,4 @@
+
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -5,10 +6,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import config
-from forms.elements.next_results_panel import NextResultsPanel
 from forms.elements.video_footer import VideoFooter
 from forms.form import Form
-from helpers.models import VideoDetails
+from helpers import get_video_time_with_js
+from models.video_detals import VideoDetails
 
 
 class WatchPage(Form):
@@ -20,21 +21,24 @@ class WatchPage(Form):
 
     PROGRESS_BAR_LOCATOR = (By.XPATH, "//div[contains(@class, 'ytp-progress-bar-container')]")
     MUTE_BUTTON_LOCATOR = (By.XPATH, "//button[contains(@class, 'ytp-mute-button')]")
-
-    VIDEO_FOOTER_LOCATOR = (By.ID, "above-the-fold")
     VIDEO_DURATION_LOCATOR = (By.CLASS_NAME, "ytp-time-duration")
+    PLAY_OR_PAUSE_BUTTON_LOCATOR = (By.XPATH, "//button[contains(@class, 'ytp-play-button')]")
+
+    VIDEO_FOOTER_LOCATION = (By.ID, "above-the-fold")
+
     NEXT_RESULTS_PANEL_LOCATOR = (By.XPATH, "//div[@id='items' and contains(@class, 'results-renderer')]")
+    VIDEO_TITLE_LOCATOR = (By.ID, "video-title")
 
     def __init__(self, driver, timeout: int = config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.VIDEO_LOCATOR)
 
     def skip_to_middle(self):
-        progress_bar = self.driver.find_element(*self.PROGRESS_BAR_LOCATOR)
-        progress_bar_width = progress_bar.size['width']
-        ActionChains(self.driver).click_and_hold(progress_bar).move_by_offset(
-            progress_bar_width // 200, 0).release().perform()
+        slider = self.driver.find_element(*self.PROGRESS_BAR_LOCATOR)
+        slider_width = slider.size['width']
+        xoffset = slider_width / 200
+        ActionChains(self.driver).click_and_hold(slider).move_by_offset(xoffset=xoffset, yoffset=0).release().perform()
 
-    def is_ads_overlay_displayed(self):
+    def is_ads_overlay_displayed(self) -> bool:
         try:
             ads_overlay = self.driver.find_element(*self.ADS_OVERLAY_LOCATOR)
             return ads_overlay.is_displayed()
@@ -54,13 +58,13 @@ class WatchPage(Form):
             wait.until(EC.invisibility_of_element_located(self.ADS_OVERLAY_LOCATOR))
 
     def get_video_details(self) -> VideoDetails:
-        video_length = self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text
+        video_duration = self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text
 
-        video_footer = VideoFooter(self.driver.find_element(*self.VIDEO_FOOTER_LOCATOR))
+        video_footer = VideoFooter(self.driver.find_element(*self.VIDEO_FOOTER_LOCATION))
         video_footer.show_more()
 
         return VideoDetails(
-            duration=video_length,
+            duration=video_duration,
             title=video_footer.get_title(),
             channel_name=video_footer.get_channel_name(),
             upload_date=video_footer.get_upload_date(),
@@ -69,6 +73,16 @@ class WatchPage(Form):
             dislike_count=video_footer.get_dislike_count()
         )
 
-    def navigate_to_first_suggested_video(self):
-        next_results_panel = NextResultsPanel(self.driver.find_element(*self.NEXT_RESULTS_PANEL_LOCATOR))
-        next_results_panel.navigate_to_first_suggested_video()
+    def navigate_to_first_suggested_video(self) -> "WatchPage":
+        next_results_panel = self.driver.find_element(*self.NEXT_RESULTS_PANEL_LOCATOR)
+        next_results_panel.find_elements(*self.VIDEO_TITLE_LOCATOR)[0].click()
+        return WatchPage(self.driver)
+
+    def pause_on_duration(self, duration_in_seconds: int):
+        video_element = self.driver.find_element(*self.VIDEO_LOCATOR)
+        play_pause_button = self.driver.find_element(*self.PLAY_OR_PAUSE_BUTTON_LOCATOR)
+
+        current_time = get_video_time_with_js(self.driver, video_element)
+        while current_time < duration_in_seconds:
+            current_time = get_video_time_with_js(self.driver, video_element)
+        play_pause_button.click()

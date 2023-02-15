@@ -6,6 +6,14 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
 
+def switch_to_primary_window(driver):
+    driver.switch_to.window(driver.window_handles[0])
+
+
+def get_video_time_with_js(driver, video_element):
+    return driver.execute_script("return arguments[0].currentTime;", video_element)
+
+
 def get_driver():
     options = webdriver.ChromeOptions()
     options.add_extension('extensions/return-youtube-dislike.crx')

@@ -9,9 +9,9 @@ from forms.pages.watch import WatchPage
 class ResultsPage(Form):
     SEARCH_INPUT_FIELD_LOCATOR = (By.XPATH, "//input[@id='search']")
     FILTER_MENU_LOCATOR = (By.ID, "filter-menu")
-    RESULTS_CONTENTS_LOCATOR = (By.ID, "contents")
     VIDEO_THUMBNAIL_LOCATOR = (By.ID, "thumbnail")
-    FIRST_RESULT_RELATIVE_LOCATOR = locate_with(*VIDEO_THUMBNAIL_LOCATOR).below({By.XPATH: "//input[@id='search']"})
+    FIRST_RESULT_RELATIVE_LOCATOR = locate_with(*VIDEO_THUMBNAIL_LOCATOR).below(
+        {SEARCH_INPUT_FIELD_LOCATOR[0]: SEARCH_INPUT_FIELD_LOCATOR[1]})
 
     def __init__(self, driver, timeout: int = config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.FILTER_MENU_LOCATOR)

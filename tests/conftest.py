@@ -1,6 +1,6 @@
 import pytest
 
-from helpers import helpers
+import helpers
 
 
 @pytest.fixture

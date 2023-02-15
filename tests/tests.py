@@ -1,10 +1,10 @@
-from forms.cookies import CookiesForm
+from forms import CookiesForm
 from forms.pages.home import HomePage
-from helpers import constants
+from core import BASE_URL
 
 
 def test_cookies_form_closes_properly(driver):
-    driver.get(constants.BASE_URL)
+    driver.get(BASE_URL)
 
     home_page = HomePage(driver)
     assert home_page.is_displayed(), "Failed to display the home page"

@@ -1,8 +1,10 @@
-from helpers import constants
 import config
 from forms.cookies import CookiesForm
 from forms.pages.home import HomePage
-from helpers.helpers import get_driver, init_logger
+from helpers import get_driver, init_logger, switch_to_primary_window
+
+
+BASE_URL = "https://www.youtube.com/"
 
 
 def main():
@@ -10,7 +12,7 @@ def main():
     driver = get_driver()
 
     try:
-        driver.get(constants.BASE_URL)
+        driver.get(BASE_URL)
         switch_to_primary_window(driver)
 
         home_page = HomePage(driver)
@@ -20,7 +22,7 @@ def main():
             cookies_form.accept_cookies()
             driver.refresh()
 
-        results_page = home_page.search("10 hours")
+        results_page = home_page.search(config.SEARCH_STRING + "3 hours")
         watch_page = results_page.select_first_result()
 
         if watch_page.is_ads_overlay_displayed():
@@ -32,14 +34,14 @@ def main():
         video_details = watch_page.get_video_details()
         print(video_details)
 
-        watch_page.navigate_to_first_suggested_video()
+        next_video_watch_page = watch_page.navigate_to_first_suggested_video()
 
+        if next_video_watch_page.is_ads_overlay_displayed():
+            next_video_watch_page.skip_or_wait_ad()
+
+        next_video_watch_page.pause_on_duration(config.NEXT_VIDEO_PAUSE_ON_DURATION)
     finally:
         driver.quit()
-
-
-def switch_to_primary_window(driver):
-    driver.switch_to.window(driver.window_handles[0])
 
 
 if __name__ == "__main__":

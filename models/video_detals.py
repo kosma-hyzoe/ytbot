@@ -14,9 +14,9 @@ class VideoDetails(NamedTuple):
         return "\n".join([
             f"Title: '{self.title}'",
             f"Channel name: '{self.channel_name}'",
-            f"Upload date: {self.upload_date}",
+            f"Upload date: '{self.upload_date}'",
             f"Duration: {self.duration}",
             f"View count: {self.view_count}",
-            f"Like count: {self.like_count}",
-            f"Dislike count: {self.dislike_count}"
+            f"Like count: '{self.like_count}'",
+            f"Dislike count: '{self.dislike_count}'"
         ])
