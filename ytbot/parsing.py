@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 
+from loguru import logger
 import humanfriendly
 
 from ytbot.models.like_count import LikeCount
@@ -35,7 +36,11 @@ def parse_like_count(like_count: str) -> LikeCount:
     try:
         return LikeCount(int(like_count), approximated=False)
     except ValueError:
-        return LikeCount(humanfriendly.parse_size(like_count), approximated=True)
+        try:
+            return LikeCount(humanfriendly.parse_size(like_count), approximated=True)
+        except:
+            logger.warning(f"unable to parse like count from '{like_count}', returning '0'")
+            return LikeCount(0, approximated=False)
 
 
 def parse_upload_date(upload_date: str) -> date:
