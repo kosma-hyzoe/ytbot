@@ -5,10 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from loguru import logger
 from ytbot import config
-from ytbot.forms.elements.video_footer import VideoFooter
-from ytbot.forms.form import Form
-from ytbot.helpers import get_video_time_with_js
+from ytbot.pages.elements.video_footer import VideoFooter
+from ytbot.pages.form import Form
+from ytbot.browser.js_utils import get_video_time_with_js
 from ytbot.models.video_detals import VideoDetails
 
 
@@ -32,10 +33,18 @@ class WatchPage(Form):
     def __init__(self, driver, timeout: int = config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.VIDEO_LOCATOR)
 
+        if "watch" not in self.driver.current_url and "YouTube" not in self.driver.title:
+            error_message = f"{self.name}: URL doesn't match the pattern, possibly a redirection error"
+            logger.error(error_message)
+            raise Exception(error_message)
+
+        self.wait_until_is_displayed()
+
     def skip_to_middle(self):
         slider = self.driver.find_element(*self.PROGRESS_BAR_LOCATOR)
         slider_width = slider.size['width']
         xoffset = slider_width / 200
+        logger.info(f"{self.name}: skipping to the middle of video playback with Selenium ActionChains...")
         ActionChains(self.driver).click_and_hold(slider).move_by_offset(xoffset=xoffset, yoffset=0).release().perform()
 
     def is_ads_overlay_displayed(self) -> bool:
@@ -43,21 +52,26 @@ class WatchPage(Form):
             ads_overlay = self.driver.find_element(*self.ADS_OVERLAY_LOCATOR)
             return ads_overlay.is_displayed()
         except NoSuchElementException:
+            logger.debug(f"{self.name}: NoSuchElementException raised when calling is_ads_overlay_displayed()")
             return False
 
     def mute_video(self):
+        logger.info(f"{self.name}: muting the video...")
         mute_button = self.driver.find_element(*self.MUTE_BUTTON_LOCATOR)
         mute_button.click()
 
     def skip_or_wait_ad(self):
         wait = WebDriverWait(self.driver, config.AD_SKIP_TIMEOUT)
+        logger.info(f"{self.name}: attempting to skip or wait an ad...")
         try:
             skip_ads_button = wait.until(EC.visibility_of_element_located(self.SKIP_ADS_BUTTON_LOCATOR))
             skip_ads_button.click()
         except TimeoutException:
+            logger.debug(f"{self.name}: TimeoutException raised when attempting to skip or wait an ad")
             wait.until(EC.invisibility_of_element_located(self.ADS_OVERLAY_LOCATOR))
 
     def get_video_details(self) -> VideoDetails:
+        logger.info(f"{self.name} extracting video details...")
         video_duration = self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text
 
         video_footer = VideoFooter(self.driver.find_element(*self.VIDEO_FOOTER_LOCATION))
@@ -75,14 +89,17 @@ class WatchPage(Form):
 
     def navigate_to_first_suggested_video(self) -> "WatchPage":
         next_results_panel = self.driver.find_element(*self.NEXT_RESULTS_PANEL_LOCATOR)
-        next_results_panel.find_elements(*self.VIDEO_TITLE_LOCATOR)[0].click()
+        next_video_title = next_results_panel.find_elements(*self.VIDEO_TITLE_LOCATOR)[0]
+        logger.info(f"{self.name}: navigating to first suggested video: '{next_video_title.text}'...")
+        next_video_title.click()
         return WatchPage(self.driver)
 
     def pause_on_duration(self, duration_in_seconds: int):
         video_element = self.driver.find_element(*self.VIDEO_LOCATOR)
         play_pause_button = self.driver.find_element(*self.PLAY_OR_PAUSE_BUTTON_LOCATOR)
-
+        logger.info(f"{self.name}: attempting to pause video when duration reaches {duration_in_seconds} seconds...")
         current_time = get_video_time_with_js(self.driver, video_element)
         while current_time < duration_in_seconds:
             current_time = get_video_time_with_js(self.driver, video_element)
         play_pause_button.click()
+        logger.info(f"{self.name}: video paused")

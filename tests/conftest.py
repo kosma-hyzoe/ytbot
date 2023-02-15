@@ -1,16 +1,19 @@
 import pytest
 
-from context import ytbot
-from ytbot import helpers
+import loguru
+from ytbot.core import init_logger
+from ytbot import config
+from ytbot.browser.browser import ChromeBrowser
 
 
 @pytest.fixture
-def driver():
-    driver = helpers.get_driver()
-    yield helpers.get_driver()
-    driver.quit()
+def browser():
+    browser = ChromeBrowser()
+    yield browser
+    browser.quit()
 
 
 @pytest.fixture()
 def logger():
-    helpers.init_logger()
+    init_logger(level=config.LOGGER_DEFAULT_LEVEL_TESTS)
+    yield loguru.logger

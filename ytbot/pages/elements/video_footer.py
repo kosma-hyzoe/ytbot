@@ -1,3 +1,4 @@
+from loguru import logger
 from selenium.webdriver.common.by import By
 
 
@@ -14,6 +15,7 @@ class VideoFooter:
         self.element = element
 
     def show_more(self):
+        logger.debug("VideoFooter: attempting to expand via the 'Show more' button...")
         show_more_button = self.element.find_element(*self.SHOW_MORE_BUTTON_LOCATOR)
         show_more_button.click()
 

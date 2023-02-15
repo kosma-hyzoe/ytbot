@@ -1,24 +1,18 @@
-from context import ytbot
-
 from ytbot.core import BASE_URL
-from ytbot.helpers import switch_to_primary_window
-from ytbot.forms.pages.home import HomePage
-from ytbot.forms.cookies import CookiesForm
+from ytbot.pages.home import HomePage
 
 
-def test_cookies_form_closes_properly(driver):
-    driver.get(BASE_URL)
-    switch_to_primary_window(driver)
+def test_cookies_form_closes_properly(logger, browser):
+    browser.navigate(BASE_URL)
+    browser.switch_to_primary_window()
 
-    home_page = HomePage(driver)
+    home_page = HomePage(browser.driver)
     assert home_page.is_displayed(), "Failed to display the home page"
     assert home_page.is_cookies_form_displayed(), "Failed to display the cookies form"
 
-    cookies_form = CookiesForm(driver)
+    home_page = home_page.accept_cookies()
 
-    cookies_form.accept_cookies()
-    cookies_form.wait_until_is_closed()
-    assert not cookies_form.is_displayed(), "Failed to close cookies form"
+    assert not home_page.is_cookies_form_displayed(), "Failed to close cookies form"
 
 
 
