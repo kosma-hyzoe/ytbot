@@ -1,9 +1,9 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.relative_locator import locate_with
 
-import config
-from forms.form import Form
-from forms.pages.watch import WatchPage
+from ytbot import config
+from ytbot.forms.form import Form
+from ytbot.forms.pages.watch import WatchPage
 
 
 class ResultsPage(Form):

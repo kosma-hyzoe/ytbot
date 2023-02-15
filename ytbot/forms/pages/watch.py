@@ -5,11 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-import config
-from forms.elements.video_footer import VideoFooter
-from forms.form import Form
-from helpers import get_video_time_with_js
-from models.video_detals import VideoDetails
+from ytbot import config
+from ytbot.forms.elements.video_footer import VideoFooter
+from ytbot.forms.form import Form
+from ytbot.helpers import get_video_time_with_js
+from ytbot.models.video_detals import VideoDetails
 
 
 class WatchPage(Form):

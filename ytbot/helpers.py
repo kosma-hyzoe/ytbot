@@ -1,3 +1,4 @@
+import os
 import sys
 
 from selenium import webdriver
@@ -5,6 +6,7 @@ from loguru import logger
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
+EXTENSIONS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), './extensions'))
 
 def switch_to_primary_window(driver):
     driver.switch_to.window(driver.window_handles[0])
@@ -16,7 +18,10 @@ def get_video_time_with_js(driver, video_element):
 
 def get_driver():
     options = webdriver.ChromeOptions()
-    options.add_extension('extensions/return-youtube-dislike.crx')
+
+    for extension_filename in os.listdir(EXTENSIONS_DIR):
+        options.add_extension(os.path.join(EXTENSIONS_DIR, extension_filename))
+
     return webdriver.Chrome(options=options, service=ChromeService(ChromeDriverManager().install()))
 
 

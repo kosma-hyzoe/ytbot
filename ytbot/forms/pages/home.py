@@ -1,10 +1,10 @@
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 
-import config
-from forms.cookies import CookiesForm
-from forms.form import Form
-from forms.pages.results import ResultsPage
+from ytbot import config
+from ytbot.forms.cookies import CookiesForm
+from ytbot.forms.form import Form
+from ytbot.forms.pages.results import ResultsPage
 
 
 class HomePage(Form):

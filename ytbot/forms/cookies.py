@@ -1,8 +1,8 @@
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-import config
-from forms.form import Form
+from ytbot import config
+from ytbot.forms.form import Form
 
 
 class CookiesForm(Form):

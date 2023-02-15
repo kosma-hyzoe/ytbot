@@ -1,7 +1,7 @@
-import config
-from forms.cookies import CookiesForm
-from forms.pages.home import HomePage
-from helpers import get_driver, init_logger, switch_to_primary_window
+from ytbot import config
+from ytbot.forms.cookies import CookiesForm
+from ytbot.forms.pages.home import HomePage
+from ytbot.helpers import get_driver, init_logger, switch_to_primary_window
 
 
 BASE_URL = "https://www.youtube.com/"
