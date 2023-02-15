@@ -5,7 +5,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import config
-from forms.elements.watch_metadata import WatchMetadata
+from forms.elements.next_results_panel import NextResultsPanel
+from forms.elements.video_footer import VideoFooter
 from forms.form import Form
 from helpers.models import VideoDetails
 
@@ -20,8 +21,9 @@ class WatchPage(Form):
     PROGRESS_BAR_LOCATOR = (By.XPATH, "//div[contains(@class, 'ytp-progress-bar-container')]")
     MUTE_BUTTON_LOCATOR = (By.XPATH, "//button[contains(@class, 'ytp-mute-button')]")
 
-    WATCH_METADATA_SECTION_LOCATOR = (By.ID, 'above-the-fold')
-    VIDEO_DURATION_LOCATOR = (By.CLASS_NAME, 'ytp-time-duration')
+    VIDEO_FOOTER_LOCATOR = (By.ID, "above-the-fold")
+    VIDEO_DURATION_LOCATOR = (By.CLASS_NAME, "ytp-time-duration")
+    NEXT_RESULTS_PANEL_LOCATOR = (By.XPATH, "//div[@id='items' and contains(@class, 'results-renderer')]")
 
     def __init__(self, driver, timeout: int = config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.VIDEO_LOCATOR)
@@ -54,22 +56,19 @@ class WatchPage(Form):
     def get_video_details(self) -> VideoDetails:
         video_length = self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text
 
-        watch_metadata = self._get_watch_metadata_element()
-        watch_metadata.show_more()
+        video_footer = VideoFooter(self.driver.find_element(*self.VIDEO_FOOTER_LOCATOR))
+        video_footer.show_more()
 
         return VideoDetails(
             duration=video_length,
-            title=watch_metadata.get_title(),
-            channel_name=watch_metadata.get_channel_name(),
-            upload_date=watch_metadata.get_upload_date(),
-            view_count=watch_metadata.get_view_count(),
-            like_count=watch_metadata.get_like_count(),
-            dislike_count=watch_metadata.get_dislike_count()
+            title=video_footer.get_title(),
+            channel_name=video_footer.get_channel_name(),
+            upload_date=video_footer.get_upload_date(),
+            view_count=video_footer.get_view_count(),
+            like_count=video_footer.get_like_count(),
+            dislike_count=video_footer.get_dislike_count()
         )
 
-
-
-    def _get_watch_metadata_element(self):
-        watch_metadata_element = self.driver.find_element(*self.WATCH_METADATA_SECTION_LOCATOR)
-        return WatchMetadata(watch_metadata_element)
-
+    def navigate_to_first_suggested_video(self):
+        next_results_panel = NextResultsPanel(self.driver.find_element(*self.NEXT_RESULTS_PANEL_LOCATOR))
+        next_results_panel.navigate_to_first_suggested_video()

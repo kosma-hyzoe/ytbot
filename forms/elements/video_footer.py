@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 
-class WatchMetadata:
+class VideoFooter:
     VIDEO_TITLE_LOCATOR = (By.XPATH, "//h1[contains(@class, 'ytd-watch-metadata')]")
     CHANNEL_LINK_LOCATOR = (By.XPATH, "//div[@id='text-container' and contains(@class, 'ytd-channel-name')]//a")
     SHOW_MORE_BUTTON_LOCATOR = (By.ID, "expand")
