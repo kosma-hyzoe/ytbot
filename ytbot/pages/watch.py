@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from ytbot import config
 from ytbot.pages.form import Form
 from ytbot.pages.elements.video_footer import VideoFooter
-from ytbot.formatting import parse_video_duration, parse_view_count, format_upload_date, parse_like_count
+from ytbot.parsing import parse_video_duration, parse_view_count, parse_upload_date, parse_like_count
 from ytbot.browser.js_utils import get_video_time_with_js
 from ytbot.models.video_detals import VideoDetails
 
@@ -81,7 +81,7 @@ class WatchPage(Form):
         video_footer.show_more()
 
         formatted_view_count = parse_view_count(video_footer.get_view_count())
-        formatted_upload_date = format_upload_date(video_footer.get_upload_date())
+        formatted_upload_date = parse_upload_date(video_footer.get_upload_date())
         formatted_like_count = parse_like_count(video_footer.get_like_count())
         formatted_dislike_count = parse_like_count(video_footer.get_dislike_count())
 

@@ -38,7 +38,7 @@ def parse_like_count(like_count: str) -> LikeCount:
         return LikeCount(humanfriendly.parse_size(like_count), approximated=True)
 
 
-def format_upload_date(upload_date: str) -> date:
+def parse_upload_date(upload_date: str) -> date:
     if "Premiered" in upload_date:
         upload_date = upload_date.replace("Premiered", "").strip()
     return datetime.strptime(upload_date, YT_DATE_FORMAT).date()
