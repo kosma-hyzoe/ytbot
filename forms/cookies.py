@@ -10,7 +10,6 @@ class CookiesForm(Form):
 
     def __init__(self, driver, timeout=config.DEFAULT_TIMEOUT):
         super().__init__(driver, timeout, self.ACCEPT_COOKIES_BUTTON)
-        self.driver = driver
 
     def accept_cookies(self):
         accept_cookies_button = self.driver.find_element(*self.ACCEPT_COOKIES_BUTTON)
