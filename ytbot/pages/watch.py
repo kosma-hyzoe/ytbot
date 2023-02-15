@@ -1,14 +1,14 @@
-
-from selenium.common import TimeoutException, NoSuchElementException
+from loguru import logger
+from selenium.common import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from loguru import logger
 from ytbot import config
-from ytbot.pages.elements.video_footer import VideoFooter
 from ytbot.pages.form import Form
+from ytbot.pages.elements.video_footer import VideoFooter
+from ytbot.formatting import parse_video_duration, parse_view_count, format_upload_date, parse_like_count
 from ytbot.browser.js_utils import get_video_time_with_js
 from ytbot.models.video_detals import VideoDetails
 
@@ -47,12 +47,13 @@ class WatchPage(Form):
         logger.info(f"{self.name}: skipping to the middle of video playback with Selenium ActionChains...")
         ActionChains(self.driver).click_and_hold(slider).move_by_offset(xoffset=xoffset, yoffset=0).release().perform()
 
-    def is_ads_overlay_displayed(self) -> bool:
+    def is_ads_overlay_displayed(self, timeout: float = config.LOCATE_AD_OVERLAY_TIMEOUT) -> bool:
         try:
-            ads_overlay = self.driver.find_element(*self.ADS_OVERLAY_LOCATOR)
+            ads_overlay = WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located(self.ADS_OVERLAY_LOCATOR))
             return ads_overlay.is_displayed()
-        except NoSuchElementException:
-            logger.debug(f"{self.name}: NoSuchElementException raised when calling is_ads_overlay_displayed()")
+        except TimeoutException:
+            logger.debug(f"{self.name}: TimeoutException raised when calling is_ads_overlay_displayed()")
             return False
 
     def mute_video(self):
@@ -60,31 +61,38 @@ class WatchPage(Form):
         mute_button = self.driver.find_element(*self.MUTE_BUTTON_LOCATOR)
         mute_button.click()
 
-    def skip_or_wait_ad(self):
+    def skip_or_wait_ads(self):
         wait = WebDriverWait(self.driver, config.AD_SKIP_TIMEOUT)
         logger.info(f"{self.name}: attempting to skip or wait an ad...")
-        try:
-            skip_ads_button = wait.until(EC.visibility_of_element_located(self.SKIP_ADS_BUTTON_LOCATOR))
-            skip_ads_button.click()
-        except TimeoutException:
-            logger.debug(f"{self.name}: TimeoutException raised when attempting to skip or wait an ad")
-            wait.until(EC.invisibility_of_element_located(self.ADS_OVERLAY_LOCATOR))
+
+        while self.is_ads_overlay_displayed():
+            try:
+                skip_ads_button = wait.until(EC.visibility_of_element_located(self.SKIP_ADS_BUTTON_LOCATOR))
+                skip_ads_button.click()
+            except TimeoutException:
+                logger.debug(f"{self.name}: TimeoutException raised when attempting to skip or wait an ad")
+                wait.until(EC.invisibility_of_element_located(self.ADS_OVERLAY_LOCATOR))
 
     def get_video_details(self) -> VideoDetails:
         logger.info(f"{self.name} extracting video details...")
-        video_duration = self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text
+        video_duration = parse_video_duration(self.driver.find_element(*self.VIDEO_DURATION_LOCATOR).text)
 
         video_footer = VideoFooter(self.driver.find_element(*self.VIDEO_FOOTER_LOCATION))
         video_footer.show_more()
 
+        formatted_view_count = parse_view_count(video_footer.get_view_count())
+        formatted_upload_date = format_upload_date(video_footer.get_upload_date())
+        formatted_like_count = parse_like_count(video_footer.get_like_count())
+        formatted_dislike_count = parse_like_count(video_footer.get_dislike_count())
+
         return VideoDetails(
-            duration=video_duration,
             title=video_footer.get_title(),
             channel_name=video_footer.get_channel_name(),
-            upload_date=video_footer.get_upload_date(),
-            view_count=video_footer.get_view_count(),
-            like_count=video_footer.get_like_count(),
-            dislike_count=video_footer.get_dislike_count()
+            upload_date=formatted_upload_date,
+            duration=video_duration,
+            view_count=formatted_view_count,
+            like_count=formatted_like_count,
+            dislike_count=formatted_dislike_count
         )
 
     def navigate_to_first_suggested_video(self) -> "WatchPage":

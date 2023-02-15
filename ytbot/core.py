@@ -1,6 +1,7 @@
 import sys
 
 from loguru import logger
+
 from ytbot import config
 from ytbot.browser.browser import ChromeBrowser
 from ytbot.pages.home import HomePage
@@ -19,13 +20,12 @@ def run():
 
         if home_page.is_cookies_form_displayed():
             home_page.accept_cookies()
-            browser.refresh()
 
         results_page = home_page.search(config.SEARCH_STRING)
         watch_page = results_page.select_first_result()
 
         if watch_page.is_ads_overlay_displayed():
-            watch_page.skip_or_wait_ad()
+            watch_page.skip_or_wait_ads()
 
         watch_page.skip_to_middle()
         watch_page.mute_video()
@@ -36,7 +36,7 @@ def run():
         next_video_watch_page = watch_page.navigate_to_first_suggested_video()
 
         if next_video_watch_page.is_ads_overlay_displayed():
-            next_video_watch_page.skip_or_wait_ad()
+            next_video_watch_page.skip_or_wait_ads()
 
         next_video_watch_page.pause_on_duration(config.NEXT_VIDEO_PAUSE_ON_DURATION)
     finally:

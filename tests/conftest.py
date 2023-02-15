@@ -1,8 +1,11 @@
 import pytest
-
 import loguru
-from ytbot.core import init_logger
+
+import humanfriendly
+
+from context import ytbot
 from ytbot import config
+from ytbot.core import init_logger
 from ytbot.browser.browser import ChromeBrowser
 
 

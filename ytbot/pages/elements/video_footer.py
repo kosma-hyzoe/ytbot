@@ -1,8 +1,10 @@
 from loguru import logger
 from selenium.webdriver.common.by import By
 
+from ytbot.pages.elements.element import Element
 
-class VideoFooter:
+
+class VideoFooter(Element):
     VIDEO_TITLE_LOCATOR = (By.XPATH, "//h1[contains(@class, 'ytd-watch-metadata')]")
     CHANNEL_LINK_LOCATOR = (By.XPATH, "//div[@id='text-container' and contains(@class, 'ytd-channel-name')]//a")
     SHOW_MORE_BUTTON_LOCATOR = (By.ID, "expand")
@@ -12,7 +14,7 @@ class VideoFooter:
     DISLIKE_BUTTON_LOCATOR = (By.ID, "segmented-dislike-button")
 
     def __init__(self, element):
-        self.element = element
+        super().__init__(element)
 
     def show_more(self):
         logger.debug("VideoFooter: attempting to expand via the 'Show more' button...")

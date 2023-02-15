@@ -1,5 +1,6 @@
 # in seconds
 DEFAULT_TIMEOUT: float = 5.
+LOCATE_AD_OVERLAY_TIMEOUT: float = 1.5
 AD_SKIP_TIMEOUT: float = 10.
 
 SEARCH_STRING: str = "python"
@@ -14,5 +15,5 @@ LOGGER_FORMAT: str = "<black><yellow>{level}</yellow> {time:HH:mm:ss.SS} : <gree
 LOGGER_COLORIZE: bool = True
 
 CHROME_OPTIONS: list[str] = [
-    # '--headless'
+    # '--headless',
 ]

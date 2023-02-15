@@ -1,7 +1,8 @@
+from loguru import logger
 from selenium.common import NoSuchElementException
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-from loguru import logger
+
 from ytbot import config
 from ytbot.pages.form import Form
 from ytbot.pages.forms.cookies import CookiesForm

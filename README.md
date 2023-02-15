@@ -6,8 +6,13 @@
 1. Modify configuration in `ytbot/config.py` if needed
 1. Run `python3 -m ytbot` in the repo directory
 
-To run tests, you can simply run `pytest` while in repo directory
-or a directory containing the repo directory.
+Test with `pytest`.
+
+## Issues and limitiations
+
+pytest doesn't handle the `humanfriendly` library well when
+run from command line, works in an IDE though. I might fix
+it soon, but this is NOT a priority for me.
 
 ## Task description
 
