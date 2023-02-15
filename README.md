@@ -5,7 +5,9 @@
 1. Install requirements from `requirements.txt`
 1. Modify configuration in `ytbot/config.py` if needed
 1. Run `python3 -m ytbot` in the repo directory
-1. To run tests, simply run `pytest` repo directory
+
+To run tests, you can simply run `pytest` while in repo directory
+or a directory containing the repo directory.
 
 ## Task description
 
