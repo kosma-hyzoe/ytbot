@@ -1,6 +1,6 @@
 from context import ytbot
 
-from ytbot.main import BASE_URL
+from ytbot.core import BASE_URL
 from ytbot.helpers import switch_to_primary_window
 from ytbot.forms.pages.home import HomePage
 from ytbot.forms.cookies import CookiesForm
