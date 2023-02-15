@@ -7,7 +7,7 @@ from ytbot.helpers import get_driver, init_logger, switch_to_primary_window
 BASE_URL = "https://www.youtube.com/"
 
 
-def main():
+def run():
     init_logger()
     driver = get_driver()
 
@@ -45,4 +45,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()
