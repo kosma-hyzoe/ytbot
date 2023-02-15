@@ -1,8 +1,6 @@
 import pytest
 import loguru
 
-import humanfriendly
-
 from context import ytbot
 from ytbot import config
 from ytbot.core import init_logger
