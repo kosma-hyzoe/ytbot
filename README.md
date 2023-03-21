@@ -1,4 +1,6 @@
-# Kantar interview task
+# ytbot
+
+A YouTube bot I did for one of my tech interviews.
 
 ## How to run
 
